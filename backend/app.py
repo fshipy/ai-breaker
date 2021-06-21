@@ -12,6 +12,7 @@ app = Flask(__name__)
 def noise_endpoint(model):
     imageFile = flask.request.files.get('image', '')
     pil_img = Image.open(imageFile)
+    # TODO we may need to change result, it is now a tuple
     result = add_noise(pil_img, model)
     img_io = io.BytesIO()
     result.save(img_io, 'PNG')
