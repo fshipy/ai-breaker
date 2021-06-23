@@ -13,7 +13,9 @@ def noise_endpoint(model):
     imageFile = flask.request.files.get('image', '')
     pil_img = Image.open(imageFile)
     # TODO we may need to change result, it is now a tuple
-    result = add_noise(pil_img, model)
+    target = 2 # TODO update it to user input?
+    label_file = "imagenet.txt" # TODO update it to be the real path
+    result = add_noise(pil_img, model, label_file, target)
     noised_image = result[0]
     img_io = io.BytesIO()
     noised_image.save(img_io, 'PNG')
