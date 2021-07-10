@@ -1,9 +1,10 @@
+
 import flask
-from flask import Flask, send_file
+from flask import Flask
 from PIL import Image
-import io
 
 from backend.NoiseService import add_noise
+from backend.dto import Response, ResponseImages, ResponsePredications, encodeImage
 
 app = Flask(__name__)
 
@@ -12,15 +13,37 @@ app = Flask(__name__)
 def noise_endpoint(model):
     imageFile = flask.request.files.get('image', '')
     pil_img = Image.open(imageFile)
-    # TODO we may need to change result, it is now a tuple
-    target = 2 # TODO update it to user input?
-    label_file = "imagenet.txt" # TODO update it to be the real path
+
+    target = 2  # TODO update it to user input?
+    label_file = "imagenet.txt"  # TODO update it to be the real path
     result = add_noise(pil_img, model, label_file, target)
+
     noised_image = result[0]
-    img_io = io.BytesIO()
-    noised_image.save(img_io, 'PNG')
-    img_io.seek(0)
-    return send_file(img_io, mimetype='image/png')
+    original_image = result[1]
+    pure_noise = result[2]
+    class_no_noise = result[3]
+    confidence_no_noise = result[4]
+    class_noised = result[5]
+    confidence_noised = result[6]
+
+    return {
+
+        'predictions:': {
+            'original': {
+                'class': class_no_noise,
+                'confidence': confidence_no_noise
+            },
+            'noised': {
+                'class': class_noised,
+                'confidence': confidence_noised
+            }
+        },
+        'images': {
+            'noised': encodeImage(noised_image),
+            'original': encodeImage(original_image),
+            'pure_noise': encodeImage(pure_noise)
+        }
+    }
 
 
 if __name__ == '__main__':
