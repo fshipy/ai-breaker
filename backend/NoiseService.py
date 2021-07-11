@@ -84,7 +84,11 @@ def load_model(model_name):
         model = models.alexnet(pretrained=True)
     elif model_name == "vgg16":
         model = models.vgg16(pretrained=True)
+    elif model_name == "resnet50":
+        model = models.resnet50(pretrained=True)
     # add more models here
+    # turn model into evaluation mode (ex. disable dropout)
+    model.eval()
     return model
 
 
