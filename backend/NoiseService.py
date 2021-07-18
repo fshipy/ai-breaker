@@ -1,12 +1,9 @@
-from torch._C import device
 import torchvision.models as models
 import torch.nn as nn
 import torch
 import torch.optim as optim
-import numpy as np
 from torchvision import transforms
 from PIL import Image
-
 
 # is a tensor of size (3 x 224 x 224)
 class Noise(nn.Module):
