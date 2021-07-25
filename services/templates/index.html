@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="" />
+    <meta name="author" content="Ayman Kassab, Frank Shi, and Sahil Pahooja" />
+    <meta name="generator" content="Hugo 0.84.0" />
+    <title>AI · Breaker - Experiments</title>
+
+    <!-- Bootstrap core CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+    </style>
+
+    <!-- Custom styles for this template -->
+    <!-- <link href="cover.css" rel="stylesheet" /> -->
+    <link href="{{ url_for('static',filename='styles/cover.css') }}" rel="stylesheet" />
+  </head>
+  <body class="d-flex h-100 text-center text-white bg-dark">
+    <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+      <header class="mb-auto">
+        <div>
+          <h3 class="float-md-start mb-0">AI · Breaker</h3>
+          <nav class="nav nav-masthead justify-content-center float-md-end">
+            <a class="nav-link active" aria-current="page" href="#">Experiments</a>
+            <!-- <a class="nav-link" href="impact.html">Social Impact</a>
+            <a class="nav-link" href="try.html">Try Your Own!</a> -->
+            <a class="nav-link" href={{url_for("impact")}}>Social Impact</a>
+            <a class="nav-link" href={{url_for("tryme")}}>Try Your Own!</a>
+          </nav>
+        </div>
+      </header>
+
+      <main class="px-3">
+        <h1 class="mt-5">Experiments</h1>
+        <div class="row align-items-md-stretch mt-5">
+          <div class="col-md-12 mb-5">
+            <div class="h-100 p-5 text-white bg-dark border border-white rounded-3">
+              <h2 class="text-start">Introduction:</h2>
+              <p class="text-start">
+                Artificial Intelligence and Machine Learning have emerged dramatically these years. 
+                Although we have been impressed by the ability of AI, we believe there should be more
+                concerns when applying AI in a real life application than the accuracy. 
+                In this project, we will focus on the robustness of an AI model. 
+                In Particular, we built an engine to generate adversarial examples to attack image 
+                classification deep learning models and can be accessed through this webpage. 
+              </p>
+            </div>
+          </div>
+          <div class="col-md-12 mb-5">
+            <div class="h-100 p-5 text-white bg-dark border border-white rounded-3">
+              <h2 class="text-start">Adversarial Examples:</h2>
+              <p class="text-start">
+                According to <em>Interpretable Machine Learning</em> by Christoph Molnar, 
+                "an adversarial example is an instance with small, intentional feature perturbations 
+                that cause a machine learning model to make a false prediction". <br>
+                <br>
+                In image classification, adversarial examples are usually noise with small magnitude 
+                adding to the input image, which will not cause visual difference to a human, but make a machine
+                learning model predict falsely.  <br>
+                <br>
+                The following results are example outputs from our algorithm. The first image is
+                the input image to the classification model without noise. The model (VGG16) predicts it as
+                a Golden Retriever with 92.2% confidence, which is correct and reasonable. After adding the
+                noise in the second image to the first image, the noised image will look like the third image.
+                There is not much difference to a human, while the only obvious difference is the red dot
+                in the top left corner. However, the model (VGG16) will predict it as a Great White Shark, with
+                96.2% confidence, which is even higher than the confidence level of the version without noise.
+                Note that the noise is not randomly generated but carefully computed. 
+              </p>
+              <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                <div class="col">
+                  <div class="card shadow-sm bg-dark border-5 border-black">
+                    <img src="/static/original_image.png" alt="" />
+                    <div class="card-body">
+                      <p class="card-text">
+                        Prediction: Golden Retriever, Confidence: 0.922
+                      </p>
+                      <div
+                        class="d-flex justify-content-between align-items-center"
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="card shadow-sm bg-dark border-5 border-black">
+                    <img src="/static/noise.png" alt="" />
+                    <div class="card-body">
+                      <p class="card-text">
+                        Noise Add to Input Image,
+                        Input + Noise = Noised Input
+                      </p>
+                      <div
+                        class="d-flex justify-content-between align-items-center"
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="card shadow-sm bg-dark border-5 border-black">
+                    <img src="/static/noised_image.png" alt="" />
+                    <div class="card-body">
+                      <p class="card-text">
+                        Prediction: Great White Shark, Confidence: 0.962
+                      </p>
+                      <div
+                        class="d-flex justify-content-between align-items-center"
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-12 mb-5">
+            <div class="h-100 p-5 text-white bg-dark border border-white rounded-3">
+              <h2 class="text-start">Technical Explanation:</h2>
+              <p class="text-start">
+                Our algorithm works for <a href="https://arxiv.org/abs/1404.5997"> AlexNet</a>,
+                <a href="https://arxiv.org/abs/1409.1556"> VGGNet</a>, 
+                <a href="https://arxiv.org/abs/1512.03385"> ResNet</a> and can be extended to
+                many other architectures. We are showing our results on Alexnet, VGG16, 
+                and Resnet50. We chose these three models because they were important breakthroughs 
+                when deep learning and Convolutional Neural Network (CNN) emerged. The model source code are
+                from <a href="https://pytorch.org/vision/stable/models.html"> torchvision</a>.
+                <h5 class="text-start">How do we construct the adversarial examples:</h5>
+                <p class="text-start">
+                  The algorithm can be summarized as using machine learning to train a layer
+                  of noise to break machine learning models. Specifically, we treat the noise 
+                  as trainable parameters and use gradient descent to update these parameters 
+                  by evaluating a customized loss function. The loss function will output a 
+                  smaller value if the model has been cheated (i.e. predict an incorrect class) 
+                  and output a higher value if the model still gives the correct prediction. Our goal
+                  is to minimize the loss function.
+                </p>
+                <h5 class="text-start">How do we build the website:</h5>
+                <p class="text-start">
+                  We are using flask.... More details
+                </p>
+              </p>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <footer class="mt-auto text-white-50">
+        <p class="text-white">For University of Waterloo - CS 492 - Spring 2021</p>
+      </footer>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
