@@ -2,10 +2,8 @@ import torchvision.models as models
 import torch.nn as nn
 import torch
 import torch.optim as optim
-import numpy as np
 from torchvision import transforms
 from PIL import Image
-
 
 # is a tensor of size (3 x 224 x 224)
 class Noise(nn.Module):
@@ -84,7 +82,11 @@ def load_model(model_name):
         model = models.alexnet(pretrained=True)
     elif model_name == "vgg16":
         model = models.vgg16(pretrained=True)
+    elif model_name == "resnet50":
+        model = models.resnet50(pretrained=True)
     # add more models here
+    # turn model into evaluation mode (ex. disable dropout)
+    model.eval()
     return model
 
 
@@ -95,9 +97,12 @@ def train_noise(
     noise,
     target,
     input_batch,
+    device,
     thres=0.02,
     thres_count=10,
     n=1000,
+    type=1,
+    epsilon=7e-2
 ):
     """
     execute the training process to update noise
@@ -113,16 +118,27 @@ def train_noise(
 
         target: the target class for the input image
 
-        input_batch: the input data in batch format (n, c, h, w) shape 
+        gd_label: the original label for the input image
+
+        input_batch: the input data in batch format (n, c, h, w) shape
+
+        device: cpu or cuda
         
         thres: the lower bound of loss we can break
 
         thres_count: how many times the loss is lower than thres before break
 
         n: the maximum number of iterations
+
+        type: type of gradient descent, 1 -> inf_norm (projected gradient descent)
+
+        epsilon: the maximum value, depending on the norm type we are using
+
+    Note: adding projected gradient descent to make all pixels look like the original
     """
     # (i.e to detect convergency)
     # increase this to get a more stable value
+    noise.train()
     for _ in range(n):
         # clear grad
         optimizer.zero_grad()
@@ -138,7 +154,13 @@ def train_noise(
         loss.backward()
         # update noise
         optimizer.step()
-
+        if type == 1: # projected gradient descent
+            # do element-wise clipping
+            with torch.no_grad():
+                epsilon = torch.tensor(epsilon, requires_grad=False).to(device)
+                # print(noise.noise, epsilon)
+                # print(torch.max(torch.min(noise.noise, epsilon), -epsilon))
+                noise.noise.copy_(torch.max(torch.min(noise.noise, epsilon), -epsilon))
 
 def predict(
     input_batch, model, noise, label_file="imagenet.txt", add_noise=False, top_k=1
@@ -163,7 +185,10 @@ def predict(
         classes(list): all top_k predicted class names (sorted with confidences)
 
         confidences(list): all top_k predicted confidences (decreasing order)
+
+        topkcatid[0]: the first confident prediction
     """
+    noise.eval()
     with torch.no_grad():
         if add_noise:
             output = model(noise(input_batch))
@@ -181,7 +206,7 @@ def predict(
     for i in range(topk_prob.size(0)):
         classes.append(categories[topkcatid[i]])
         confidences.append(topk_prob[i].item())
-    return classes, confidences
+    return classes, confidences, topkcatid[0]
 
 
 def add_noise(
@@ -191,7 +216,7 @@ def add_noise(
     target=None,
     lr=0.01,
     momentum=0.9,
-    weight_decay=1e-4,
+    weight_decay=5e-2,
 ):
     """
     the main function to train and add noise to the image to break model with <model_name>
@@ -236,13 +261,16 @@ def add_noise(
 
     input_batch = process_image(pil_image)
     original_image = reverse_process(input_batch)
-
+    
     # move the input and model to GPU for speed if available
     if torch.cuda.is_available():
-        input_batch = input_batch.to("cuda")
-        model.to("cuda")
-        noise.to("cuda")
-        target = target.to("cuda")
+        device = torch.device("cuda")
+        input_batch = input_batch.to(device)
+        model.to(device)
+        noise.to(device)
+        target = target.to(device)
+    else:
+        device = torch.device("cpu")
 
     # loss function to train noise
     celoss = nn.CrossEntropyLoss()
@@ -261,15 +289,43 @@ def add_noise(
         thres=0.02,
         thres_count=10,
         n=1000,
+        device=device
     )
 
-    # we can change to top 5 by specifying top_k parameter to predict()
-    top_1_class_no_noise, top_1_confidence_no_noise = predict(
-        input_batch, model, noise, label_file=label_file, add_noise=False
-    )
-
-    top_1_class_noised, top_1_confidence_noised = predict(
+    top_1_class_noised, top_1_confidence_noised, pred_1_idx = predict(
         input_batch, model, noise, label_file=label_file, add_noise=True
+    )
+
+    if pred_1_idx != torch.squeeze(target):
+        # we the first confident class after adding noise is not the target
+        # we use normal gradient descent and train it again (i.e. remove eps)
+        # the noised image may look less similar to the original image
+        print("train again without inf norm")
+        noise = Noise()
+        noise.to(device)
+        optimizer = optim.SGD(
+            noise.parameters(), lr=lr, momentum=momentum, weight_decay=weight_decay/2
+        )
+        train_noise(
+            optimizer,
+            celoss,
+            model,
+            noise,
+            target,
+            input_batch,
+            thres=0.02,
+            thres_count=10,
+            n=2000, # train more iters
+            device=device,
+            type=2 # remove projection part
+        )
+        top_1_class_noised, top_1_confidence_noised, pred_1_idx = predict(
+            input_batch, model, noise, label_file=label_file, add_noise=True
+        )
+    
+    # we can change to top 5 by specifying top_k parameter to predict()
+    top_1_class_no_noise, top_1_confidence_no_noise, _ = predict(
+        input_batch, model, noise, label_file=label_file, add_noise=False
     )
 
     noised_image = reverse_process(noise(input_batch))
