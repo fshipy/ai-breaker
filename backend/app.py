@@ -39,9 +39,9 @@ def noise_endpoint(model):
             }
         },
         'images': {
-            'noised': encodeImage(noised_image),
-            'original': encodeImage(original_image),
-            'pure_noise': encodeImage(pure_noise)
+            'noised': "encoded_img",
+            'original': "encoded_img",
+            'pure_noise': "encoded_img"
         }
     }
 

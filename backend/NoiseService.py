@@ -218,6 +218,15 @@ def add_noise(
     momentum=0.9,
     weight_decay=5e-2,
 ):
+    return (
+        pil_image,
+        pil_image,
+        pil_image,
+        "top_1_class_no_noise",
+        "top_1_confidence_no_noise",
+        "top_1_class_noised",
+        "top_1_confidence_noised",
+    )
     """
     the main function to train and add noise to the image to break model with <model_name>
 
