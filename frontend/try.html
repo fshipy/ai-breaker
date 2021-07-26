@@ -110,5 +110,84 @@
       integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
       crossorigin="anonymous"
     ></script>
+    <script>
+      window.addEventListener('load', function() {
+        document.querySelector('input[type="file"]').addEventListener('change', function() {
+          if (this.files && this.files[0]) {
+            var img = document.querySelector('img');
+            img.onload = () => {
+              URL.revokeObjectURL(img.src);  // no longer needed, free memory
+            }
+
+            img.src = URL.createObjectURL(this.files[0]); // set src to blob url
+            document.getElementById('uploaded-image').style.display = "inline"
+          }
+        });
+      });
+
+      function processForm(e) {
+        if (e.preventDefault) e.preventDefault();
+
+        // Check form
+        /// Check for uploaded image
+        const fileList = document.querySelectorAll('input[name="uploaded-image"]')[0].files;
+        if (fileList.length === 0) {
+          alert("Please Upload an image.")
+          return false;
+        }
+        /// Check for selected model to break
+        const modelToBreakRadioButtons = document.querySelectorAll('input[name="model-to-break"]');
+        let modelToBreak = null;
+        for (const rb of modelToBreakRadioButtons) {
+          if (rb.checked) {
+            modelToBreak = rb.value;
+            break;
+          }
+        }
+        if (modelToBreak === null) {
+          alert("Please select a model to break.")
+          return false;
+        }
+        /// Check for selected target class
+        const targetClassRadioButtons = document.querySelectorAll('input[name="target-class"]');
+        let targetClass = null;
+        for (const rb of targetClassRadioButtons) {
+          if (rb.checked) {
+            targetClass = rb.value;
+            break;
+          }
+        }
+        if (targetClass === null) {
+          alert("Please select a target class.")
+          return false;
+        }
+
+        // If here then all checks have passed, make request now:
+
+        const formData = new FormData();
+        formData.append("image", fileList[0])
+        let requestOptions = {
+          method: "POST",
+          body: formData,
+          redirect: "follow",
+        };
+
+        /*
+        fetch("http://127.0.0.1:5000/noise/" + modelToBreak, requestOptions)
+                .then((response) => response.text())
+                .then((result) => console.log(result))
+                .catch((error) => console.log("error", error));
+        // You must return false to prevent the default form behavior
+        return false;
+      }
+
+      var form = document.getElementById('ai-breaker-form');
+      if (form.attachEvent) {
+        form.attachEvent("submit", processForm);
+      } else {
+        form.addEventListener("submit", processForm);
+      }
+         */
+    </script>
   </body>
 </html>
