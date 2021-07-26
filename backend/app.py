@@ -26,24 +26,28 @@ def noise_endpoint(model):
     class_noised = result[5]
     confidence_noised = result[6]
 
-    return {
-
-        'predictions:': {
-            'original': {
-                'class': class_no_noise,
-                'confidence': confidence_no_noise
+    response = flask.jsonify(
+        {
+            'predictions': {
+                'original': {
+                    'class': class_no_noise,
+                    'confidence': confidence_no_noise
+                },
+                'noised': {
+                    'class': class_noised,
+                    'confidence': confidence_noised
+                }
             },
-            'noised': {
-                'class': class_noised,
-                'confidence': confidence_noised
+            'images': {
+                'noised': encodeImage(noised_image),
+                'original': encodeImage(original_image),
+                'pure_noise': encodeImage(pure_noise)
             }
-        },
-        'images': {
-            'noised': encodeImage(noised_image),
-            'original': encodeImage(original_image),
-            'pure_noise': encodeImage(pure_noise)
         }
-    }
+    )
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.status_code = 200
+    return response
 
 
 if __name__ == '__main__':
