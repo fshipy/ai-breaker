@@ -79,11 +79,11 @@
                   <div class="radio-button-group">
                     <h2 class="text-center">Target Class</h2>
                     <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" name="target-class" id="shark" value="shark">
+                      <input class="form-check-input" type="radio" name="target-class" id="shark" value="2">
                       <label class="form-check-label" for="shark">Shark</label>
                     </div>
                     <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" name="target-class" id="dog" value="dog">
+                      <input class="form-check-input" type="radio" name="target-class" id="dog" value="207">
                       <label class="form-check-label" for="dog">Dog</label>
                     </div>
                     <div class="form-check form-check-inline">
@@ -93,6 +93,57 @@
                   </div>
                   <br/>
                   <button class="btn btn-light btn-lg d-inline-block" id="run" type="submit">Run!</button>
+                </div>
+              </div>
+              <div style="display: none" class="col-md-12 mb-5" id="form-result">
+                <div class="h-100 p-5 text-white bg-dark border border-white rounded-3">
+                  <h2 class="text-start">Examples:</h2>
+                  <p class="text-start">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+                    tempor incididunt ut labore et dolore magna aliqua.
+                  </p>
+                  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                    <div class="col">
+                      <div class="card shadow-sm bg-dark border-5 border-black">
+                        <h4>Original Image</h4>
+                        <img src="#" alt="Your original image." id="original-image">
+                        <div class="card-body">
+                          <p class="card-text" id="original-image-paragraph">
+                          </p>
+                          <div
+                                  class="d-flex justify-content-between align-items-center"
+                          ></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="card shadow-sm bg-dark border-5 border-black">
+                        <h4>Pure Noise</h4>
+                        <img src="#" alt="Pure Noise" id="pure-noise-image">
+                        <div class="card-body">
+                          <p class="card-text">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                          </p>
+                          <div
+                                  class="d-flex justify-content-between align-items-center"
+                          ></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="card shadow-sm bg-dark border-5 border-black">
+                        <h4>Noised Image</h4>
+                        <img src="#" alt="Your image, noised." id="noised-image">
+                        <div class="card-body">
+                          <p class="card-text" id="noised-image-paragraph">
+                          </p>
+                          <div
+                                  class="d-flex justify-content-between align-items-center"
+                          ></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -165,19 +216,44 @@
         // If here then all checks have passed, make request now:
 
         const formData = new FormData();
-        formData.append("image", fileList[0])
+        formData.append("image", fileList[0]);
+        formData.append("target", targetClass);
         let requestOptions = {
           method: "POST",
           body: formData,
           redirect: "follow",
         };
 
-        /*
         fetch("http://127.0.0.1:5000/noise/" + modelToBreak, requestOptions)
-                .then((response) => response.text())
-                .then((result) => console.log(result))
+                .then((response) => response.json()).then((result) => {
+                    console.log(result)
+                    const noised =
+                            {
+                              class: result["predictions"]["noised"]["class"][0],
+                              confidence: result["predictions"]["noised"]["confidence"][0],
+                              base64: result["images"]["noised"]
+                            }
+                    const original =
+                            {
+                              class: result["predictions"]["original"]["class"][0],
+                              confidence: result["predictions"]["original"]["confidence"][0],
+                              base64: result["images"]["original"]
+                            };
+
+                    const purseNoiseBase64 = result["images"]["pure_noise"];
+
+
+                    document.getElementById('original-image').src = "data:image/png;base64, " + original.base64;
+                    document.getElementById('original-image-paragraph').innerText = original["class"] + " " + original["confidence"];
+                    document.getElementById('pure-noise-image').src = "data:image/png;base64, " + purseNoiseBase64;
+                    document.getElementById('noised-image').src = "data:image/png;base64, " + noised.base64;
+                    document.getElementById('noised-image-paragraph').innerText = noised["class"] + " " + noised["confidence"];
+
+
+                    document.getElementById('form-result').style.display = "block"
+
+                })
                 .catch((error) => console.log("error", error));
-        // You must return false to prevent the default form behavior
         return false;
       }
 
@@ -187,7 +263,6 @@
       } else {
         form.addEventListener("submit", processForm);
       }
-         */
     </script>
   </body>
 </html>
