@@ -49,7 +49,106 @@
       </header>
 
       <main class="px-3">
-        <h1 class="mt-5">Try Your Own!</h1>
+        <form id="ai-breaker-form">
+          <h1 class="mt-5">Try Your Own!</h1>
+          <div class="row align-items-md-stretch mt-5">
+            <div class="col-md-12 mb-5">
+              <div class="p-5 text-white bg-dark border border-white rounded-3">
+                <h2 class="text-center">Upload your own Image</h2>
+                <label class="form-label" for="customFile">Upload a picture of your Dog or Shark ^.^ for best results.</label>
+                <input class="form-control" type="file" name="uploaded-image" id="customFile" />
+                <br><img style="display: none" width="500" height="500" id="uploaded-image" src="#" alt="Your uploaded image." >
+              </div>
+              <div class="col-md-12 mb-5">
+                <div class="h-100 p-5 text-white bg-dark border border-white rounded-3">
+                  <div class="radio-button-group">
+                    <h2 class="text-center">Choose a model to break</h2>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="model-to-break" id="alexnet" value="alexnet">
+                      <label class="form-check-label" for="alexnet">AlexNet</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="model-to-break" id="vgg" value="vgg16">
+                      <label class="form-check-label" for="vgg">VGG</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="model-to-break" id="model3" value="resnet50">
+                      <label class="form-check-label" for="model3">Model 3</label>
+                    </div>
+                  </div>
+                  <div class="radio-button-group">
+                    <h2 class="text-center">Target Class</h2>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="target-class" id="shark" value="2">
+                      <label class="form-check-label" for="shark">Shark</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="target-class" id="dog" value="207">
+                      <label class="form-check-label" for="dog">Dog</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="target-class" id="random" value="random">
+                      <label class="form-check-label" for="random">Random</label>
+                    </div>
+                  </div>
+                  <br/>
+                  <button class="btn btn-light btn-lg d-inline-block" id="run" type="submit">Run!</button>
+                </div>
+              </div>
+              <div style="display: none" class="col-md-12 mb-5" id="form-result">
+                <div class="h-100 p-5 text-white bg-dark border border-white rounded-3">
+                  <h2 class="text-start">Examples:</h2>
+                  <p class="text-start">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+                    tempor incididunt ut labore et dolore magna aliqua.
+                  </p>
+                  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                    <div class="col">
+                      <div class="card shadow-sm bg-dark border-5 border-black">
+                        <h4>Original Image</h4>
+                        <img src="#" alt="Your original image." id="original-image">
+                        <div class="card-body">
+                          <p class="card-text" id="original-image-paragraph">
+                          </p>
+                          <div
+                                  class="d-flex justify-content-between align-items-center"
+                          ></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="card shadow-sm bg-dark border-5 border-black">
+                        <h4>Pure Noise</h4>
+                        <img src="#" alt="Pure Noise" id="pure-noise-image">
+                        <div class="card-body">
+                          <p class="card-text">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                          </p>
+                          <div
+                                  class="d-flex justify-content-between align-items-center"
+                          ></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="card shadow-sm bg-dark border-5 border-black">
+                        <h4>Noised Image</h4>
+                        <img src="#" alt="Your image, noised." id="noised-image">
+                        <div class="card-body">
+                          <p class="card-text" id="noised-image-paragraph">
+                          </p>
+                          <div
+                                  class="d-flex justify-content-between align-items-center"
+                          ></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
       </main>
 
       <footer class="mt-auto text-white-50">
@@ -62,5 +161,108 @@
       integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
       crossorigin="anonymous"
     ></script>
+    <script>
+      window.addEventListener('load', function() {
+        document.querySelector('input[type="file"]').addEventListener('change', function() {
+          if (this.files && this.files[0]) {
+            var img = document.querySelector('img');
+            img.onload = () => {
+              URL.revokeObjectURL(img.src);  // no longer needed, free memory
+            }
+
+            img.src = URL.createObjectURL(this.files[0]); // set src to blob url
+            document.getElementById('uploaded-image').style.display = "inline"
+          }
+        });
+      });
+
+      function processForm(e) {
+        if (e.preventDefault) e.preventDefault();
+
+        // Check form
+        /// Check for uploaded image
+        const fileList = document.querySelectorAll('input[name="uploaded-image"]')[0].files;
+        if (fileList.length === 0) {
+          alert("Please Upload an image.")
+          return false;
+        }
+        /// Check for selected model to break
+        const modelToBreakRadioButtons = document.querySelectorAll('input[name="model-to-break"]');
+        let modelToBreak = null;
+        for (const rb of modelToBreakRadioButtons) {
+          if (rb.checked) {
+            modelToBreak = rb.value;
+            break;
+          }
+        }
+        if (modelToBreak === null) {
+          alert("Please select a model to break.")
+          return false;
+        }
+        /// Check for selected target class
+        const targetClassRadioButtons = document.querySelectorAll('input[name="target-class"]');
+        let targetClass = null;
+        for (const rb of targetClassRadioButtons) {
+          if (rb.checked) {
+            targetClass = rb.value;
+            break;
+          }
+        }
+        if (targetClass === null) {
+          alert("Please select a target class.")
+          return false;
+        }
+
+        // If here then all checks have passed, make request now:
+
+        const formData = new FormData();
+        formData.append("image", fileList[0]);
+        formData.append("target", targetClass);
+        let requestOptions = {
+          method: "POST",
+          body: formData,
+          redirect: "follow",
+        };
+
+        fetch("http://127.0.0.1:5000/noise/" + modelToBreak, requestOptions)
+                .then((response) => response.json()).then((result) => {
+                    console.log(result)
+                    const noised =
+                            {
+                              class: result["predictions"]["noised"]["class"][0],
+                              confidence: result["predictions"]["noised"]["confidence"][0],
+                              base64: result["images"]["noised"]
+                            }
+                    const original =
+                            {
+                              class: result["predictions"]["original"]["class"][0],
+                              confidence: result["predictions"]["original"]["confidence"][0],
+                              base64: result["images"]["original"]
+                            };
+
+                    const purseNoiseBase64 = result["images"]["pure_noise"];
+
+
+                    document.getElementById('original-image').src = "data:image/png;base64, " + original.base64;
+                    document.getElementById('original-image-paragraph').innerText = original["class"] + " " + original["confidence"];
+                    document.getElementById('pure-noise-image').src = "data:image/png;base64, " + purseNoiseBase64;
+                    document.getElementById('noised-image').src = "data:image/png;base64, " + noised.base64;
+                    document.getElementById('noised-image-paragraph').innerText = noised["class"] + " " + noised["confidence"];
+
+
+                    document.getElementById('form-result').style.display = "block"
+
+                })
+                .catch((error) => console.log("error", error));
+        return false;
+      }
+
+      var form = document.getElementById('ai-breaker-form');
+      if (form.attachEvent) {
+        form.attachEvent("submit", processForm);
+      } else {
+        form.addEventListener("submit", processForm);
+      }
+    </script>
   </body>
 </html>
