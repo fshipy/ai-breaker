@@ -49,7 +49,55 @@
       </header>
 
       <main class="px-3">
-        <h1 class="mt-5">Try Your Own!</h1>
+        <form id="ai-breaker-form">
+          <h1 class="mt-5">Try Your Own!</h1>
+          <div class="row align-items-md-stretch mt-5">
+            <div class="col-md-12 mb-5">
+              <div class="p-5 text-white bg-dark border border-white rounded-3">
+                <h2 class="text-center">Upload your own Image</h2>
+                <label class="form-label" for="customFile">Upload a picture of your Dog or Shark ^.^ for best results.</label>
+                <input class="form-control" type="file" name="uploaded-image" id="customFile" />
+                <br><img style="display: none" width="500" height="500" id="uploaded-image" src="#" alt="Your uploaded image." >
+              </div>
+              <div class="col-md-12 mb-5">
+                <div class="h-100 p-5 text-white bg-dark border border-white rounded-3">
+                  <div class="radio-button-group">
+                    <h2 class="text-center">Choose a model to break</h2>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="model-to-break" id="alexnet" value="alexnet">
+                      <label class="form-check-label" for="alexnet">AlexNet</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="model-to-break" id="vgg" value="vgg16">
+                      <label class="form-check-label" for="vgg">VGG</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="model-to-break" id="model3" value="resnet50">
+                      <label class="form-check-label" for="model3">Model 3</label>
+                    </div>
+                  </div>
+                  <div class="radio-button-group">
+                    <h2 class="text-center">Target Class</h2>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="target-class" id="shark" value="shark">
+                      <label class="form-check-label" for="shark">Shark</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="target-class" id="dog" value="dog">
+                      <label class="form-check-label" for="dog">Dog</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="target-class" id="random" value="random">
+                      <label class="form-check-label" for="random">Random</label>
+                    </div>
+                  </div>
+                  <br/>
+                  <button class="btn btn-light btn-lg d-inline-block" id="run" type="submit">Run!</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
       </main>
 
       <footer class="mt-auto text-white-50">
