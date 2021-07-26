@@ -1,20 +1,28 @@
 
 import flask
+import random
 from flask import Flask
 from PIL import Image
+from random import seed
+from random import randint
 
 from backend.NoiseService import add_noise
 from backend.dto import Response, ResponseImages, ResponsePredications, encodeImage
 
 app = Flask(__name__)
-
+seed(1)
 
 @app.route('/noise/<model>', methods=['POST'])
 def noise_endpoint(model):
     imageFile = flask.request.files.get('image', '')
     pil_img = Image.open(imageFile)
 
-    target = 2  # TODO update it to user input?
+    target = flask.request.form.get('target', '')
+    if target == "random":
+        target = random.randint(0, 999)
+    else:
+        target = int(target)
+
     label_file = "imagenet.txt"  # TODO update it to be the real path
     result = add_noise(pil_img, model, label_file, target)
 
