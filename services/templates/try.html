@@ -33,7 +33,7 @@
     </style>
 
     <!-- Custom styles for this template -->
-    <link href="cover.css" rel="stylesheet" />
+    <link href="{{ url_for('static',filename='styles/cover.css') }}" rel="stylesheet" />
   </head>
   <body class="d-flex h-100 text-center text-white bg-dark">
     <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
@@ -41,8 +41,8 @@
         <div>
           <h3 class="float-md-start mb-0">AI · Breaker</h3>
           <nav class="nav nav-masthead justify-content-center float-md-end">
-            <a class="nav-link" href="index.html">Experiments</a>
-            <a class="nav-link" href="impact.html">Social Impact</a>
+            <a class="nav-link" href={{url_for("home")}}>Experiments</a>
+            <a class="nav-link" href={{url_for("impact")}}>Social Impact</a>
             <a class="nav-link active" aria-current="page" href="#">Try Your Own!</a>
           </nav>
         </div>
@@ -55,7 +55,7 @@
             <div class="col-md-12 mb-5">
               <div class="p-5 text-white bg-dark border border-white rounded-3">
                 <h2 class="text-center">Upload your own Image</h2>
-                <label class="form-label" for="customFile">Try uploading a jpeg. Hint: Dog, Shark, Cat, Mouse.</label>
+                <label class="form-label" for="customFile">Try uploading a jpeg or png in RGB format. Hint: Dog, Shark, Cat, Mouse.</label>
                 <input class="form-control bg-dark text-white" type="file" name="uploaded-image" id="customFile" />
                 <br><img style="display: none" width="500" height="500" id="uploaded-image" src="#" alt="Your uploaded image." >
               </div>
@@ -69,11 +69,11 @@
                     </div>
                     <div class="form-check form-check-inline">
                       <input class="form-check-input" type="radio" name="model-to-break" id="vgg" value="vgg16">
-                      <label class="form-check-label" for="vgg">VGG</label>
+                      <label class="form-check-label" for="vgg">VGG16</label>
                     </div>
                     <div class="form-check form-check-inline">
                       <input class="form-check-input" type="radio" name="model-to-break" id="model3" value="resnet50">
-                      <label class="form-check-label" for="model3">Model 3</label>
+                      <label class="form-check-label" for="model3">ResNet50</label>
                     </div>
                   </div>
                   <div class="radio-button-group">
@@ -102,10 +102,9 @@
               </div>
               <div style="display: none" class="col-md-12 mb-5" id="form-result">
                 <div class="h-100 p-5 text-white bg-dark border border-white rounded-3">
-                  <h2 class="text-start">Examples:</h2>
+                  <h2 class="text-start">Results:</h2>
                   <p class="text-start">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                    tempor incididunt ut labore et dolore magna aliqua.
+                    The figures are listed as original image, noise and noised image.
                   </p>
                   <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
                     <div class="col">
@@ -123,11 +122,12 @@
                     </div>
                     <div class="col">
                       <div class="card shadow-sm bg-dark border-5 border-black">
-                        <h4>Pure Noise</h4>
+                        <h4>Noise</h4>
                         <img src="#" alt="Pure Noise" id="pure-noise-image">
                         <div class="card-body">
                           <p class="card-text">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                            Noise Add to Input Image,
+                            Input + Noise = Noised Input
                           </p>
                           <div
                                   class="d-flex justify-content-between align-items-center"
@@ -249,10 +249,10 @@
 
 
                     document.getElementById('original-image').src = "data:image/png;base64, " + original.base64;
-                    document.getElementById('original-image-paragraph').innerText = original["class"] + " " + original["confidence"];
+                    document.getElementById('original-image-paragraph').innerText = "Prediction: " + original["class"] + "\nConfidence: " + original["confidence"];
                     document.getElementById('pure-noise-image').src = "data:image/png;base64, " + purseNoiseBase64;
                     document.getElementById('noised-image').src = "data:image/png;base64, " + noised.base64;
-                    document.getElementById('noised-image-paragraph').innerText = noised["class"] + " " + noised["confidence"];
+                    document.getElementById('noised-image-paragraph').innerText = "Prediction: " + noised["class"] + "\nConfidence: " + noised["confidence"];
                     document.getElementById('form-result').style.display = "block"
                     document.getElementById('spinner').style.display = "none"
                     document.getElementById('run-text').innerText = "Run again!"

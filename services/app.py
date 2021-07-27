@@ -1,16 +1,28 @@
 
 import flask
 import random
-from flask import Flask
+from flask import Flask, render_template
 from PIL import Image
 from random import seed
-from random import randint
+from NoiseService import add_noise
+from dto import Response, ResponseImages, ResponsePredications, encodeImage
 
-from backend.NoiseService import add_noise
-from backend.dto import Response, ResponseImages, ResponsePredications, encodeImage
+seed(1)
 
 app = Flask(__name__)
-seed(1)
+
+@app.route("/")
+@app.route("/home")
+def home():
+    return render_template("index.html")
+
+@app.route("/impact")
+def impact():
+    return render_template("impact.html")
+
+@app.route("/try")
+def tryme():
+    return render_template("try.html")
 
 @app.route('/noise/<model>', methods=['POST'])
 def noise_endpoint(model):
@@ -25,6 +37,9 @@ def noise_endpoint(model):
 
     label_file = "imagenet.txt"  # TODO update it to be the real path
     result = add_noise(pil_img, model, label_file, target)
+
+    result[4][0] = round(result[4][0], 3)
+    result[6][0] = round(result[6][0], 3)
 
     noised_image = result[0]
     original_image = result[1]

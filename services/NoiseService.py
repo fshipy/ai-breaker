@@ -330,7 +330,7 @@ def add_noise(
 
     noised_image = reverse_process(noise(input_batch))
 
-    pure_noise = reverse_process(noise.noise)
+    pure_noise = transforms.ToPILImage()(noise.noise.squeeze(0) * 255).convert("RGB")
 
     return (
         noised_image,

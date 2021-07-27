@@ -33,7 +33,8 @@
     </style>
 
     <!-- Custom styles for this template -->
-    <link href="cover.css" rel="stylesheet" />
+    <!-- <link href="cover.css" rel="stylesheet" /> -->
+    <link href="{{ url_for('static',filename='styles/cover.css') }}" rel="stylesheet" />
   </head>
   <body class="d-flex h-100 text-center text-white bg-dark">
     <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
@@ -41,10 +42,9 @@
         <div>
           <h3 class="float-md-start mb-0">AI · Breaker</h3>
           <nav class="nav nav-masthead justify-content-center float-md-end">
-            <a class="nav-link" href="index.html">Experiments</a>
-            
+            <a class="nav-link" href={{url_for("home")}}>Experiments</a>
             <a class="nav-link active" aria-current="page" href="#">Social Impact</a>
-            <a class="nav-link" href="try.html">Try Your Own!</a>
+            <a class="nav-link" href={{url_for("tryme")}}>Try Your Own!</a>
           </nav>
         </div>
       </header>
