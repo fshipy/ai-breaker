@@ -92,7 +92,12 @@
                     </div>
                   </div>
                   <br/>
-                  <button class="btn btn-light btn-lg d-inline-block" id="run" type="submit">Run!</button>
+                  <button class="btn btn-outline-light  btn-lg d-inline-block" id="run" type="submit">
+                    <span style="display: none" class="spinner-border spinner-border-sm" id="spinner" role="status" aria-hidden="true"></span>
+                    <span id="run-text">Run</span>
+                  </button>
+                  <br/>
+                  <span class="badge bg-secondary mt-4">Results will appear below</span>
                 </div>
               </div>
               <div style="display: none" class="col-md-12 mb-5" id="form-result">
@@ -214,7 +219,8 @@
         }
 
         // If here then all checks have passed, make request now:
-
+        document.getElementById('spinner').style.display = "inline-block"
+        document.getElementById('run-text').innerText = "Loading..."
         const formData = new FormData();
         formData.append("image", fileList[0]);
         formData.append("target", targetClass);
@@ -226,7 +232,6 @@
 
         fetch("http://127.0.0.1:5000/noise/" + modelToBreak, requestOptions)
                 .then((response) => response.json()).then((result) => {
-                    console.log(result)
                     const noised =
                             {
                               class: result["predictions"]["noised"]["class"][0],
@@ -248,12 +253,16 @@
                     document.getElementById('pure-noise-image').src = "data:image/png;base64, " + purseNoiseBase64;
                     document.getElementById('noised-image').src = "data:image/png;base64, " + noised.base64;
                     document.getElementById('noised-image-paragraph').innerText = noised["class"] + " " + noised["confidence"];
-
-
                     document.getElementById('form-result').style.display = "block"
+                    document.getElementById('spinner').style.display = "none"
+                    document.getElementById('run-text').innerText = "Run again!"
 
                 })
-                .catch((error) => console.log("error", error));
+                .catch((error) => {
+                  document.getElementById('spinner').style.display = "none"
+                  document.getElementById('run-text').innerText = "Run again!"
+                  console.log("error", error)
+                });
         return false;
       }
 
