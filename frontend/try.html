@@ -55,14 +55,14 @@
             <div class="col-md-12 mb-5">
               <div class="p-5 text-white bg-dark border border-white rounded-3">
                 <h2 class="text-center">Upload your own Image</h2>
-                <label class="form-label" for="customFile">Upload a picture of your Dog or Shark ^.^ for best results.</label>
-                <input class="form-control" type="file" name="uploaded-image" id="customFile" />
+                <label class="form-label" for="customFile">Try uploading a jpeg. Hint: Dog, Shark, Cat, Mouse.</label>
+                <input class="form-control bg-dark text-white" type="file" name="uploaded-image" id="customFile" />
                 <br><img style="display: none" width="500" height="500" id="uploaded-image" src="#" alt="Your uploaded image." >
               </div>
               <div class="col-md-12 mb-5">
                 <div class="h-100 p-5 text-white bg-dark border border-white rounded-3">
                   <div class="radio-button-group">
-                    <h2 class="text-center">Choose a model to break</h2>
+                    <h2 class="text-center mb-3">Choose a model to break</h2>
                     <div class="form-check form-check-inline">
                       <input class="form-check-input" type="radio" name="model-to-break" id="alexnet" value="alexnet">
                       <label class="form-check-label" for="alexnet">AlexNet</label>
@@ -77,7 +77,7 @@
                     </div>
                   </div>
                   <div class="radio-button-group">
-                    <h2 class="text-center">Target Class</h2>
+                    <h2 class="text-center mb-3">Target Class</h2>
                     <div class="form-check form-check-inline">
                       <input class="form-check-input" type="radio" name="target-class" id="shark" value="2">
                       <label class="form-check-label" for="shark">Shark</label>
@@ -92,7 +92,12 @@
                     </div>
                   </div>
                   <br/>
-                  <button class="btn btn-light btn-lg d-inline-block" id="run" type="submit">Run!</button>
+                  <button class="btn btn-outline-light  btn-lg d-inline-block" id="run" type="submit">
+                    <span style="display: none" class="spinner-border spinner-border-sm" id="spinner" role="status" aria-hidden="true"></span>
+                    <span id="run-text">Run</span>
+                  </button>
+                  <br/>
+                  <span class="badge bg-secondary mt-4">Results will appear below</span>
                 </div>
               </div>
               <div style="display: none" class="col-md-12 mb-5" id="form-result">
@@ -214,7 +219,8 @@
         }
 
         // If here then all checks have passed, make request now:
-
+        document.getElementById('spinner').style.display = "inline-block"
+        document.getElementById('run-text').innerText = "Loading..."
         const formData = new FormData();
         formData.append("image", fileList[0]);
         formData.append("target", targetClass);
@@ -226,7 +232,6 @@
 
         fetch("http://127.0.0.1:5000/noise/" + modelToBreak, requestOptions)
                 .then((response) => response.json()).then((result) => {
-                    console.log(result)
                     const noised =
                             {
                               class: result["predictions"]["noised"]["class"][0],
@@ -248,12 +253,16 @@
                     document.getElementById('pure-noise-image').src = "data:image/png;base64, " + purseNoiseBase64;
                     document.getElementById('noised-image').src = "data:image/png;base64, " + noised.base64;
                     document.getElementById('noised-image-paragraph').innerText = noised["class"] + " " + noised["confidence"];
-
-
                     document.getElementById('form-result').style.display = "block"
+                    document.getElementById('spinner').style.display = "none"
+                    document.getElementById('run-text').innerText = "Run again!"
 
                 })
-                .catch((error) => console.log("error", error));
+                .catch((error) => {
+                  document.getElementById('spinner').style.display = "none"
+                  document.getElementById('run-text').innerText = "Run again!"
+                  console.log("error", error)
+                });
         return false;
       }
 
