@@ -51,3 +51,11 @@ body {
   color: #fff;
   border-bottom-color: #fff;
 }
+
+
+/*
+ * Margin before Radio Buttons
+ */
+.radio-button-group {
+  margin-top: 25px;
+}
