@@ -56,58 +56,78 @@
             <div class="h-100 p-5 text-white bg-dark border border-white rounded-3">
               <h2 class="text-start">Social Implications:</h2>
               <p class="text-start">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-                veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-                commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-                velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-                cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-                est laborum.
+                The adversarial attack is a commonly known issue in the AI industry nowadays. 
+                Even if sometimes we don't have access to the inside of a model, 
+                a hacker can "guess" the model's architecture. It is a fact that many machine 
+                learning models currently all have similar architectures and training procedures,
+                 and most of them are open to the public. Most training datasets are also shared,
+                  for example, ImageNet. In addition, transfer learning is popularly used, 
+                  using a pre-trained model as a basis or starting point of a new model. 
+                  Some research has shown that if an adversarial example impacts shallow models, 
+                  it could also impact a model with similar architectures.
 
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-                veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-                commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-                velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-                cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-                est laborum.
+                  <h5 class="text-start">Safety</h5>
+                  <p class="text-start">
+                  Safety is the most direct impact of this issue. A group of researchers (Athalye et. al (2017))
+                   has shown they can 3d-print a well-designed toy turtle to make an object 
+                   detection camera think it is a rifle. Similarly, a rifle can be modified 
+                   and make an object detection algorithm think it is a turtle or other instances. 
+                   <a href="https://www.youtube.com/watch?v=piYnd_wYlT8"> Fooling Image Recognition with Adversarial Examples</a>
+                  </p>
+                   <h5 class="text-start">Reliability</h5>
+                   <p class="text-start">
+                    If an AI model can be tricked by tiny modifications on the input, 
+                    we should ask, how “reliable is an AI and how much we can trust them”? 
+                    It is reasonable to think further: if an AI model makes such mistakes, 
+                    who is responsible for the cost? Can AI really replace humans?
+                   </p>
+                   <h5 class="text-start">Security</h5>
+                   <p class="text-start">
+                     Consider authorization AI like a card-id scanner 
+                     or a face detection system deployed in private enterprise,  a
+                      card-id scanner could be replaced by a counterfeit card-id 
+                      with the same photo with some added noise tricking. This could bring us 
+                      security concerns if human is replaced by AI in security fields.
+                   </p>
 
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-                veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-                commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-                velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-                cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-                est laborum.
 
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-                veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-                commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-                velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-                cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-                est laborum.
+
+
+          
               </p>
             </div>
           </div>
           <div class="col-md-12 mb-5">
             <div class="h-100 p-5 text-white bg-dark border border-white rounded-3">
-              <h2 class="text-start">Defense, What We Can Do:</h2>
+              <h2 class="text-start">Defense:</h2>
               <p class="text-start">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-                veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-                commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-                velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-                cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-                est laborum.
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-                veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-                commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-                velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-                cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-                est laborum.
+                Developers should consider more about adversarial attacks like we have 
+                introduced and other concerns, including privacy leakage, when training 
+                AI models instead of focusing only on accuracy. And this is the main goal
+                 of our project, to make AI developers aware of the vulnerabilities in AI models.
+                 <h5 class="text-start">Defense when training:</h5>
+                   <p class="text-start"> This is known as Adversarial Training,
+                      where the developers take the impact of adversarial examples
+                       into account when building and training the models. Also, it 
+                       is encouraged to use modified architectures when building AI models
+                        instead of copying from public research papers directly, which could 
+                        add some difficulties to attackers.
+                   </p>
+                   <h5 class="text-start">Defense when benchmarking and deploying:</h5>
+                   <p class="text-start"> One (a company or developer) should design a professional
+                     benchmarking process on the robustness (and other issues, like information leakage) before releasing a model,
+                     in order to catch any issues in advance. 
+                   </p>
+                   <br>
+                   <p class="text-start">
+                   In general, it is challenging to build a perfectly robust 
+                   AI model as defence is much difficult than attacking 
+                   (A good defence approach needs to protect against all kinds 
+                   of attacks, but a good attack only needs to break one defence 
+                   approach). Nevertheless, it is glad to see more researchers are 
+                   starting to study the robustness of AI models these days.
+                  </p>
+
               </p>
             </div>
           </div>
