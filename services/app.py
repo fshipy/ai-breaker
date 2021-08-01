@@ -1,4 +1,3 @@
-
 import flask
 import random
 from flask import Flask, render_template
@@ -11,18 +10,22 @@ seed(1)
 
 app = Flask(__name__)
 
+
 @app.route("/")
 @app.route("/home")
 def home():
     return render_template("index.html")
 
+
 @app.route("/impact")
 def impact():
     return render_template("impact.html")
 
+
 @app.route("/try")
 def tryme():
     return render_template("try.html")
+
 
 @app.route('/noise/<model>', methods=['POST'])
 def noise_endpoint(model):
