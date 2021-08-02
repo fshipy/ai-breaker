@@ -22,6 +22,8 @@ Note:
 
 1. Screenshots can be found in `screenshots` folder.
 2. For the engine (try-your-own) part, using a GPU can be much more efficent than CPU only. Please be patient if using CPU only as it takes time to compute.
+3. For the engine (try-your-own) part, the first run takes extra time because it may needs to download
+required models from `torchvision`.
 
 # By:
 
